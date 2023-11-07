@@ -1,0 +1,75 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score, mean_squared_error
+
+df = pd.read_csv('uber.csv')
+df.info()
+df.shape
+df.head()
+df.isnull()
+df.drop(columns=["Unnamed: 0", "key"], inplace=True)
+df.info()
+df.isnull().sum()
+
+df['dropoff_latitude'].fillna(value=df['dropoff_latitude'].mean(),inplace = True)
+df['dropoff_longitude'].fillna(value=df['dropoff_longitude'].median(),inplace = True)
+
+df.isnull().sum()
+df.dtypes
+
+df.pickup_datetime = pd.to_datetime(df.pickup_datetime)
+df.dtypes
+
+df = df.assign(hour = df.pickup_datetime.dt.hour,
+               day = df.pickup_datetime.dt.day,
+               month = df.pickup_datetime.dt.month,
+               year = df.pickup_datetime.dt.year,
+               dayofweek = df.pickup_datetime.dt.dayofweek)
+df
+
+df = df.drop(["pickup_datetime"], axis =1)
+df
+
+
+#Identify Outlier
+
+df.plot(kind = "box",subplots = True,layout = (6,2),figsize=(15,20)) #Boxplot to check the outliers
+plt.show()
+
+#Function to find the correlation
+corr = df.corr() 
+corr
+
+fig,axis = plt.subplots(figsize = (10,6))
+sns.heatmap(df.corr(),annot = True)  #Correlation Heatmap (Light values means highly correlated)
+
+# Dividing the dataset into feature and target values 
+df_x = df[['pickup_longitude','pickup_latitude','dropoff_longitude','dropoff_latitude','passenger_count','hour','day','month','year','dayofweek']]
+df_y = df['fare_amount']
+
+# Dividing the dataset into training and testing dataset
+x_train, x_test, y_train, y_test = train_test_split(df_x, df_y, test_size=0.2, random_state=1)
+
+lr = LinearRegression()
+lr.fit(x_train, y_train)
+lr_pred = lr.predict(x_test)
+lr_r2 = r2_score(y_test, lr_pred)
+lr_rmse = mean_squared_error(y_test, lr_pred, squared=False)
+
+# Random Forest Regression
+rf = RandomForestRegressor()
+rf.fit(x_train, y_train)
+rf_pred = rf.predict(x_test)
+rf_r2 = r2_score(y_test, rf_pred)
+rf_rmse = mean_squared_error(y_test, rf_pred, squared=False)
+
+# Evaluate and compare the models
+print("Linear Regression R-squared:", lr_r2)
+print("Linear Regression RMSE:", lr_rmse)
+print("Random Forest Regression R-squared:", rf_r2)
+print("Random Forest Regression RMSE:", rf_rmse)

@@ -1,0 +1,64 @@
+package com.daa;
+
+import java.util.Scanner;
+
+public class FibNonRecursive {
+	 public static void main(String args[])
+	    {
+	        Scanner sc=new Scanner(System.in);
+	        System.out.println("enter no u want to display : ");
+	        int count = sc.nextInt();
+	        int n1=0 , n2=1 , n3;
+
+	        System.out.print(n1+"  "+n2+"  ");
+
+	        for(int i=2;i<count;i++)
+	        {
+	            n3=n1+n2;
+	            System.out.print(n3+"  ");
+	            n1=n2;
+	            n2=n3;
+	        }
+
+	    }
+}
+
+
+
+//Recursive
+package com.daa;
+
+import java.util.Scanner;
+
+class frecursive
+{
+    int fseries(int no)
+    {
+        if(no==0)
+        {
+            return 0;
+        }
+
+        if(no==1 || no==2)
+        {
+            return 1;
+        }
+
+        return fseries(no-1)+fseries(no-2);
+    }
+}
+public class FibonacciRecursive {
+
+	public static void main(String[] args) {
+		 int n;
+	        System.out.println("how many no u want to display in series : ");
+	        Scanner sc = new Scanner(System.in);
+	        n = sc.nextInt();
+	        frecursive f = new frecursive();
+	        for(int i=0;i<n;i++)
+	        {
+	            System.out.print(f.fseries(i) + "  ");
+	        }		
+	}
+
+}

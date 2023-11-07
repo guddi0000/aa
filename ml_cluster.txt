@@ -1,0 +1,38 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+
+# Load the sales data (replace 'sales_data_sample.csv' with the actual file path)
+data = pd.read_csv('sales_data_sample.csv',encoding = "ISO-8859-1")
+
+data.dtypes
+# Select the relevant features for clustering (e.g., 'Quantity', 'Profit')
+X = data[['QUANTITYORDERED', 'PRICEEACH']]
+
+
+# Standardize the features (important for K-Means)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+
+# Initialize a list to store the sum of squared distances (inertia) for different numbers of clusters
+inertia = []
+
+
+# Determine the number of clusters using the elbow method
+for k in range(1, 11):  # You can adjust the range of clusters to consider
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X_scaled)
+    inertia.append(kmeans.inertia_)
+
+# Plot the elbow curve to identify the optimal number of clusters
+plt.figure(figsize=(8, 6))
+plt.plot(range(1, 11), inertia, marker='o', linestyle='-', color='b')
+plt.xlabel('Number of Clusters (K)')
+plt.ylabel('Inertia (Sum of Squared Distances)')
+plt.title('Elbow Method for Optimal K')
+plt.grid()
+plt.show()
