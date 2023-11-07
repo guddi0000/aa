@@ -1,32 +1,46 @@
 package com.daa;
+import java.util.Arrays;
+import java.util.Comparator;
+
+class Item {
+    double weight;
+    double value;
+
+    public Item(double weight, double value) {
+        this.weight = weight;
+        this.value = value;
+    }
+}
 
 public class Knapsack {
-	
-	public static int knapsack(int[] weights, int[] values, int capacity) {
-		int n = weights.length;
-		int[][] dp = new int[n + 1][capacity + 1];
+    public static double getMaxValue(Item[] items, double capacity) {
+        // Sort items by value per unit weight in descending order (greedy strategy)
+    	Arrays.sort(items, (item1, item2) -> Double.compare(item2.value / item2.weight, item1.value / item1.weight));
 
-		for (int i = 1; i <= n; i++) {
-			for (int w = 1; w <= capacity; w++) {
+        double totalValue = 0.0;
 
-				if (weights[i - 1] <= w) {
+        for (Item item : items) {
+            if (capacity <= 0) {
+                break;
+            }
 
-					dp[i][w] = Math.max(values[i - 1] + dp[i - 1][w - weights[i - 1]], dp[i - 1][w]);
-				
-				} else {
-					
-					dp[i][w] = dp[i - 1][w];
-				}
-			}
-		}
-		return dp[n][capacity];
-	}
+            double fraction = Math.min(1, capacity / item.weight);
+            totalValue += fraction * item.value;
+            capacity -= fraction * item.weight;
+        }
 
-	public static void main(String[] args) {
-		int[] weights = { 10, 20, 30 };
-		int[] values = { 60, 100, 120 };
-		int capacity = 50;
-		int maxValue = knapsack(weights, values, capacity);
-		System.out.println("Maximum value that can be obtained: " + maxValue);
-	}
+        return totalValue;
+    }
+
+    public static void main(String[] args) {
+        Item[] items = {
+            new Item(10, 60),
+            new Item(20, 100),
+            new Item(30, 120),
+        };
+        double capacity = 50;
+
+        double maxValue = getMaxValue(items, capacity);
+        System.out.println("Maximum value that can be obtained = " + maxValue);
+    }
 }
